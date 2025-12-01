@@ -52,17 +52,18 @@ Sono supportate notifiche in tempo reale, invio foto, messaggi e dettagli per ri
 
 ## Casi d’Uso
 
-- **[Utente/Officina]** Registrazione  
-- **[Utente/Officina]** Login  
-- **[Officina]** Caricamento nuovo prodotto  
-- **[Utente/Officina]** Visualizzazione catalogo e prodotti  
-- **[Utente/Officina]** Prenotazione / Acquisto prodotto  
-- **[Utente/Officina]** Proposta di un nuovo prezzo  
-- **[Utente]** Gestione account (indirizzo, password, email, telefono)  
-- **[Officina]** Gestione shop (nome, P.IVA, pagamenti, prodotti, offerte)  
-- **[Officina]** Gestione ordini  
-- **[Utente]** Recensioni officine  
-- **[Utente]** Chat con officina  
+as sconosciuto i want to registrarmi come utente/officina
+as utente/officina i want to login come utente/officina
+as officina i want to caricare prodotto
+as utente/officina i want to visualizzare catalogo o prodotto
+as utente/officina i want to prenotare/acquistare prodotto
+as utente/officina i want to offrire nuovo prezzo per prodotto
+as utente i want to gestire il mio account (indirizzo, password, email, numero telefono)
+as officina i want to gestire il mio shop (nome shop, partita IVA, gestire pagamenti, gestire prodotti, gestire offerte)
+as officina i want to gestire ordini
+as utente i want to recensire officina
+as utente i want to contattare via chat officina
+
 
 ---
 
