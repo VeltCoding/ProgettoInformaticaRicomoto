@@ -1,50 +1,78 @@
-# ProgettoInformaticaRicomoto
+# Ricomoto  
+**Tra utenti, per utenti: il marketplace dei ricambi per motoveicoli**
 
-Progetto Lovable:  https://ricomoto.lovable.app
+## Autore
+**Ouajidi Ilyas**
 
-NOME E COGNOME:
-Ouajidi Ilyas
+## Progetto Lovable  
+🔗 https://ricomoto.lovable.app
 
-TITOLO:
-Ricomoto
+---
 
-TAGLINE:
-Tra utenti, per utenti: il mercato dei ricambi usati e nuovi per i motoveicoli.
+## Descrizione del Progetto
+**Ricomoto** è una piattaforma pensata per mettere in contatto motociclisti e officine, facilitando la compravendita di ricambi nuovi e usati per qualsiasi tipo di motoveicolo.
 
-DESCRIZIONE:
-Una piattaforma dedicata ai motociclisti in cerca di pezzi di ricambio ed alle officine, su questa piattaforma le officine avranno la possibilità di caricare i propri pezzi di ricambio ad un certo prezzo in modo che gli utenti oppure altre officine possano prenotarlo per poi andare a comprarlo, con la possibilità di ordinarlo direttamente per farselo arrivare a casa e anche quella di proporre altri prezzi, inoltre le officine avranno il proprio shop con la raccolta dei propri prodotti.
+Le **officine** possono:
+- Caricare i propri pezzi di ricambio
+- Gestire uno shop personale
+- Ricevere ordini, prenotazioni e offerte
+- Gestire pagamenti, prodotti e offerte
+- Comunicare con gli utenti tramite chat
 
-TARGET:
-Motociclisti e Meccanici
+Gli **utenti** possono:
+- Cercare e acquistare ricambi
+- Prenotare o ordinare per spedizione
+- Proporre un proprio prezzo
+- Recensire le officine
+- Contattare i venditori tramite chat integrata
 
-COMPETITOR:
-i siti di compravendita come subito e facebook marketplace 
+Sono supportate notifiche in tempo reale, invio foto, messaggi e dettagli per ritiro/spedizione.
 
-TECNOLOGIE:
-html, php, js, css
+---
 
+## Target
+- Motociclisti  
+- Officine e meccanici  
 
+---
 
+## Competitor
+- Subito.it  
+- Facebook Marketplace  
 
+---
 
-CASI D'USO:
+## Tecnologie Utilizzate
+- **HTML**  
+- **CSS**  
+- **JavaScript**  
+- **PHP**
 
-as sconosciuto i want to registrarmi come utente/officina
-as utente/officina i want to login come utente/officina
-as officina i want to caricare prodotto
-as utente/officina i want to visualizzare catalogo o prodotto
-as utente/officina i want to prenotare/acquistare prodotto
-as utente/officina i want to offrire nuovo prezzo per prodotto
-as utente i want to gestire il mio account (indirizzo, password, email, numero telefono)
-as officina i want to gestire il mio shop (nome shop, partita IVA, gestire pagamenti, gestire prodotti, gestire offerte)
-as officina i want to gestire ordini
-as utente i want to recensire officina
-as utente i want to contattare via chat officina
+---
 
+## Casi d’Uso
 
+- **[Utente/Officina]** Registrazione  
+- **[Utente/Officina]** Login  
+- **[Officina]** Caricamento nuovo prodotto  
+- **[Utente/Officina]** Visualizzazione catalogo e prodotti  
+- **[Utente/Officina]** Prenotazione / Acquisto prodotto  
+- **[Utente/Officina]** Proposta di un nuovo prezzo  
+- **[Utente]** Gestione account (indirizzo, password, email, telefono)  
+- **[Officina]** Gestione shop (nome, P.IVA, pagamenti, prodotti, offerte)  
+- **[Officina]** Gestione ordini  
+- **[Utente]** Recensioni officine  
+- **[Utente]** Chat con officina  
 
+---
 
-Messaggi inviati in tempo reale / asincrono; notifiche push/email.
+## Funzionalità Avanzate
+- Messaggistica in tempo reale / asincrona  
+- Notifiche push ed email  
+- Invio foto, offerte, e coordinate per ritiro/spedizione  
+- Chat collegata a un ordine  
+- Trasferimento chat a un altro membro dello staff  
+- Sistema di protezione: blocco/ban in caso di abuso  
 
-Possibilità di inviare foto, proposte d’offerta, coordinate per ritiro/spedizione.
-Estensioni: Messaggistica legata a un ordine; trasferimento chat a un altro membro dello staff; blocco/ban se abuso.
+---
+
