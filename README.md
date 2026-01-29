@@ -11,3 +11,6 @@ curl -i -X POST http://localhost/ricomoto/api/token.php \
 
 curl -i http://localhost/ricomoto/api/permissions.php \
   -H "Authorization: Bearer INCOLLA_TOKEN"
+
+
+**bisogna come prima cosa usare il file sql per importare il database**
