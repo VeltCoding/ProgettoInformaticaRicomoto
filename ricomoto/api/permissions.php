@@ -3,11 +3,11 @@ declare(strict_types=1);
 
 header("Content-Type: application/json; charset=UTF-8");
 
-// ================= CONFIG =================
+//CONFIG 
 $JWT_SECRET = "SUPERSegretissimo123"; // stesso usato in login
 $JWT_ISSUER = "ricomoto-api";
 
-// ================= JWT VERIFY =================
+//JWT VERIFY
 function base64url_decode(string $data): string {
     return base64_decode(strtr($data, '-_', '+/'));
 }
@@ -48,7 +48,7 @@ function jwt_verify(string $jwt, string $secret): array {
     return $payload;
 }
 
-// ================= HEADER AUTH =================
+//HEADER AUTH
 $headers = getallheaders();
 
 if (!isset($headers["Authorization"])) {
@@ -68,7 +68,7 @@ $payload = jwt_verify($jwt, $JWT_SECRET);
 
 $userId = (int)$payload["sub"];
 
-// ================= DB (PDO) =================
+//DB (PDO)
 try {
     $pdo = new PDO(
         "mysql:host=localhost;dbname=ricomoto;charset=utf8mb4",
@@ -84,7 +84,7 @@ try {
     exit;
 }
 
-// ================= QUERY PERMESSI =================
+//QUERY PERMESSI
 $sql = "
 SELECT DISTINCT p.code
 FROM permissions p
@@ -98,7 +98,7 @@ $stmt->execute([$userId]);
 
 $permissions = $stmt->fetchAll(PDO::FETCH_COLUMN);
 
-// ================= RESPONSE =================
+//RESPONSE
 echo json_encode([
     "user_id" => $userId,
     "permissions" => $permissions
