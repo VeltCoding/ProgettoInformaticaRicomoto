@@ -62,6 +62,7 @@ if ($r) $officinaId = (int)$r["id"];
 if ($officinaId) {
   $stmt = $conn->prepare("
     SELECT n.created_at,
+           n.messaggio AS notifica_messaggio,
            u.nome AS buyer_nome, u.cognome AS buyer_cognome, u.email AS buyer_email,
            p.titolo AS prodotto_titolo
     FROM notifica n
@@ -157,7 +158,10 @@ if ($officinaId) {
                 <span class="small" style="opacity:.8;">(<?= htmlspecialchars($n["buyer_email"]) ?>)</span>
               </div>
               <div class="small" style="margin-top:4px;">
-                Ha acquistato: <b><?= htmlspecialchars($n["prodotto_titolo"]) ?></b>
+                Prodotto: <b><?= htmlspecialchars($n["prodotto_titolo"]) ?></b>
+              </div>
+              <div class="small" style="margin-top:4px;">
+                Messaggio: <?= nl2br(htmlspecialchars($n["notifica_messaggio"])) ?>
               </div>
               <div class="small" style="margin-top:4px; opacity:.8;">
                 <?= htmlspecialchars($n["created_at"]) ?>

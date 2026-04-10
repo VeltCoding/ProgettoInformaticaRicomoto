@@ -21,13 +21,13 @@ $canUpload = hasPermission('prodotto.crea');
 <html>
 <head>
   <meta charset="utf-8">
-  <title>Prodotti</title>
+  <title>Prodottiii</title>
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
 <div class="container">
-  <h1>Prodotti</h1>
-  <p>Catalogo</p>
+  <h1>Prodottiii</h1>
+  <p>Catalogo.</p>
 
   <div class="btn-row" style="margin-bottom:14px;">
     <a class="btn btn-blue" href="dashboard.php">Dashboard</a>
@@ -59,6 +59,15 @@ $canUpload = hasPermission('prodotto.crea');
               <button class="btn btn-blue" type="submit">Acquista</button>
             </form>
           <?php endif; ?>
+
+          <?php if ($canBuy && $p["stato"] === "disponibile"): ?>
+            <form method="POST" action="notifica.php" style="margin-top:10px; display:flex; flex-direction:column; gap:8px;">
+              <input type="hidden" name="prodotto_id" value="<?= (int)$p["id"] ?>">
+              <textarea name="messaggio" rows="2" placeholder="Scrivi la tua richiesta per l'officina..." style="width:100%; border-radius:8px; padding:8px; border:1px solid #ccc;" required></textarea>
+              <button class="btn btn-blue" type="submit">Chiedi info</button>
+            </form>
+          <?php endif; ?>
+          
         </div>
       </div>
     <?php endforeach; ?>

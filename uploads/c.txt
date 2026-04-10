@@ -1,2 +1,2 @@
 curl -i http://localhost/ricomoto/api/permissions.php \
-  -H "Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjEwLCJpYXQiOjE3Njk3MjI4MTQsImV4cCI6MTc2OTcyMzQxNCwiaXNzIjoicmljb21vdG8tYXBpIn0.wYfTNh5IjDtOxu6hcKI521WySH5XXi6yALD5hG7JWJQ"
+  -H "Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjE3LCJpYXQiOjE3NzIxNDE2MTMsImV4cCI6MTc3MjE0MjIxMywiaXNzIjoicmljb21vdG8tYXBpIn0.ml_EWoB9idXilST7m8R_DX0IXOGnmvRUSXXRF3Axvqw"
