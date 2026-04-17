@@ -9,11 +9,10 @@ function loadUserRoles(int $userId): array {
           JOIN user_roles ur ON ur.role_id = r.id
           WHERE ur.user_id = ?";
   $stmt = $conn->prepare($sql);
-  $stmt->bind_param("i", $userId);
+  $stmt->bindParam(1, $userId);
   $stmt->execute();
-  $res = $stmt->get_result();
   $roles = [];
-  while ($row = $res->fetch_assoc()) $roles[] = $row["name"];
+  while ($row = $stmt->fetch()) $roles[] = $row["name"];
   return $roles;
 }
 
@@ -32,11 +31,11 @@ function loadPermissions(int $userId): array {
      WHERE up.user_id = ?)
   ";
   $stmt = $conn->prepare($sql);
-  $stmt->bind_param("ii", $userId, $userId);
+  $stmt->bindParam(1, $userId);
+  $stmt->bindParam(2, $userId);
   $stmt->execute();
-  $res = $stmt->get_result();
   $perms = [];
-  while ($row = $res->fetch_assoc()) $perms[] = $row["code"];
+  while ($row = $stmt->fetch()) $perms[] = $row["code"];
   return $perms;
 }
 

@@ -12,9 +12,9 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     $err = "Compila email e password.";
   } else {
     $stmt = $conn->prepare("SELECT ID, password FROM utente WHERE email = ?");
-    $stmt->bind_param("s", $email);
+    $stmt->bindParam(1, $email);
     $stmt->execute();
-    $user = $stmt->get_result()->fetch_assoc();
+    $user = $stmt->fetch();
 
     if ($user && password_verify($password, $user["password"])) {
       $uid = (int)$user["ID"];

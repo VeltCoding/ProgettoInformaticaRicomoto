@@ -13,9 +13,9 @@ $jwtRemaining = $jwtExp > 0 ? max(0, $jwtExp - time()) : 0;
 
 // Dati utente base
 $stmt = $conn->prepare("SELECT ID, nome, cognome, email FROM utente WHERE ID=?");
-$stmt->bind_param("i", $userId);
+$stmt->bindParam(1, $userId);
 $stmt->execute();
-$me = $stmt->get_result()->fetch_assoc();
+$me = $stmt->fetch();
 
 // Ruoli
 $ruoli = [];
@@ -25,10 +25,9 @@ $stmt = $conn->prepare("
   JOIN roles r ON r.id = ur.role_id
   WHERE ur.user_id = ?
 ");
-$stmt->bind_param("i", $userId);
+$stmt->bindParam(1, $userId);
 $stmt->execute();
-$res = $stmt->get_result();
-while ($row = $res->fetch_assoc()) $ruoli[] = $row["name"];
+while ($row = $stmt->fetch()) $ruoli[] = $row["name"];
 
 // Permessi
 $permessi = [];
@@ -44,19 +43,19 @@ $stmt = $conn->prepare("
    JOIN user_permissions up ON up.permission_id = p.id
    WHERE up.user_id = ?)
 ");
-$stmt->bind_param("ii", $userId, $userId);
+$stmt->bindParam(1, $userId);
+$stmt->bindParam(2, $userId);
 $stmt->execute();
-$res = $stmt->get_result();
-while ($row = $res->fetch_assoc()) $permessi[] = $row["code"];
+while ($row = $stmt->fetch()) $permessi[] = $row["code"];
 sort($permessi);
 
 // Se OFFICINA: MONITORA (notifiche acquisto)
 $officinaId = null;
 $notifiche = [];
 $stmt = $conn->prepare("SELECT id FROM officina WHERE utente_id = ?");
-$stmt->bind_param("i", $userId);
+$stmt->bindParam(1, $userId);
 $stmt->execute();
-$r = $stmt->get_result()->fetch_assoc();
+$r = $stmt->fetch();
 if ($r) $officinaId = (int)$r["id"];
 
 if ($officinaId) {
@@ -72,9 +71,9 @@ if ($officinaId) {
     ORDER BY n.created_at DESC
     LIMIT 50
   ");
-  $stmt->bind_param("i", $officinaId);
+  $stmt->bindParam(1, $officinaId);
   $stmt->execute();
-  $notifiche = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
+  $notifiche = $stmt->fetchAll();
 }
 ?>
 <!DOCTYPE html>

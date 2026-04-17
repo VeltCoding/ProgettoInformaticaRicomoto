@@ -16,12 +16,12 @@ if ($messaggio === "") {
 }
 
 try {
-  $conn->begin_transaction();
+  $conn->beginTransaction();
 
   $stmt = $conn->prepare("SELECT id, officina_id, titolo FROM prodotto WHERE id=? FOR UPDATE");
-  $stmt->bind_param("i", $pid);
+  $stmt->bindParam(1, $pid);
   $stmt->execute();
-  $r = $stmt->get_result()->fetch_assoc();
+  $r = $stmt->fetch();
 
   if (!$r) throw new Exception("Prodotto non trovato.");
 
@@ -31,7 +31,10 @@ try {
   $fullMessage = "Richiesta di info su '$titolo': " . $messaggio;
 
   $stmt = $conn->prepare("INSERT INTO notifica(officina_id, prodotto_id, utente_id, messaggio) VALUES (?,?,?,?)");
-  $stmt->bind_param("iiis", $officinaId, $pid, $userId, $fullMessage);
+  $stmt->bindParam(1, $officinaId);
+  $stmt->bindParam(2, $pid);
+  $stmt->bindParam(3, $userId);
+  $stmt->bindParam(4, $fullMessage);
   $stmt->execute();
 
   $conn->commit();

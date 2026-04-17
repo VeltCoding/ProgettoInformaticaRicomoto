@@ -3,7 +3,7 @@ declare(strict_types=1);
 
 header("Content-Type: application/json; charset=UTF-8");
 
-require_once __DIR__ . "/../db.php";   // $conn (mysqli)
+require_once __DIR__ . "/../db.php";   // $conn (PDO)
 require_once __DIR__ . "/jwt.php";     // jwt_sign()
 
 if ($_SERVER["REQUEST_METHOD"] !== "POST") {
@@ -28,10 +28,9 @@ if ($email === "" || $password === "") {
 
 // 🔥 tabella/colonne REALI
 $stmt = $conn->prepare("SELECT ID, password FROM utente WHERE email = ? LIMIT 1");
-$stmt->bind_param("s", $email);
+$stmt->bindParam(1, $email);
 $stmt->execute();
-$res = $stmt->get_result();
-$user = $res->fetch_assoc();
+$user = $stmt->fetch();
 
 if (!$user) {
   http_response_code(401);

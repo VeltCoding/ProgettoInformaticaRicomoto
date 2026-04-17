@@ -8,10 +8,9 @@ if (!$userId) { header("Location: login.php"); exit; }
 // trovo officina collegata (serve per sapere a chi appartiene il prodotto)
 $officinaId = null;
 $stmt = $conn->prepare("SELECT id FROM officina WHERE utente_id = ?");
-$stmt->bind_param("i", $userId);
+$stmt->bindParam(1, $userId);
 $stmt->execute();
-$res = $stmt->get_result();
-if ($row = $res->fetch_assoc()) $officinaId = (int)$row['id'];
+if ($row = $stmt->fetch()) $officinaId = (int)$row['id'];
 
 if (!$officinaId && !hasPermission('utenti.gestisci')) {
   die("Solo un account officina (o admin) può caricare prodotti.");
@@ -53,7 +52,10 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 
     // inserisco prodotto
     $stmt = $conn->prepare("INSERT INTO prodotto(officina_id, titolo, descrizione, immagine, stato) VALUES (?,?,?,?, 'disponibile')");
-    $stmt->bind_param("isss", $officinaId, $titolo, $descrizione, $destRel);
+    $stmt->bindParam(1, $officinaId);
+    $stmt->bindParam(2, $titolo);
+    $stmt->bindParam(3, $descrizione);
+    $stmt->bindParam(4, $destRel);
     $stmt->execute();
 
     $ok = "Prodotto caricato!";

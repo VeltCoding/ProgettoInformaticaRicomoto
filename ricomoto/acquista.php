@@ -9,20 +9,20 @@ $pid = (int)($_POST["prodotto_id"] ?? 0);
 if ($pid <= 0) { header("Location: prodotti.php?msg=Prodotto+non+valido"); exit; }
 
 try {
-  $conn->begin_transaction();
+  $conn->beginTransaction();
 
     // blocco riga prodotto (evita doppio acquisto)
       $stmt = $conn->prepare("SELECT id, officina_id, stato, titolo FROM prodotto WHERE id=? FOR UPDATE");
-        $stmt->bind_param("i", $pid);
+        $stmt->bindParam(1, $pid);
           $stmt->execute();
-            $r = $stmt->get_result()->fetch_assoc();
+            $r = $stmt->fetch();
 
               if (!$r) throw new Exception("Prodotto non trovato.");
                 if ($r["stato"] !== "disponibile") throw new Exception("Prodotto già venduto.");
 
                   // aggiorna stato
                     $stmt = $conn->prepare("UPDATE prodotto SET stato='venduto' WHERE id=?");
-                      $stmt->bind_param("i", $pid);
+                      $stmt->bindParam(1, $pid);
                         $stmt->execute();
 
                           // crea notifica per officina
@@ -31,7 +31,10 @@ try {
                                 $messaggio = "Hai ricevuto un acquisto per: " . $titolo;
 
                                   $stmt = $conn->prepare("INSERT INTO notifica(officina_id, prodotto_id, utente_id, messaggio) VALUES (?,?,?,?)");
-                                    $stmt->bind_param("iiis", $officinaId, $pid, $userId, $messaggio);
+                                    $stmt->bindParam(1, $officinaId);
+                                    $stmt->bindParam(2, $pid);
+                                    $stmt->bindParam(3, $userId);
+                                    $stmt->bindParam(4, $messaggio);
                                       $stmt->execute();
 
                                         $conn->commit();

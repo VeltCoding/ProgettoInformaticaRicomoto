@@ -12,7 +12,7 @@ $sql = "SELECT p.*, o.nome AS nome_officina
         JOIN officina o ON o.id = p.officina_id
         ORDER BY p.created_at DESC";
 $res = $conn->query($sql);
-$prodotti = $res->fetch_all(MYSQLI_ASSOC);
+$prodotti = $res->fetchAll(PDO::FETCH_ASSOC);
 
 $canBuy = hasPermission('acquisto.crea');
 $canUpload = hasPermission('prodotto.crea');
@@ -21,7 +21,7 @@ $canUpload = hasPermission('prodotto.crea');
 <html>
 <head>
   <meta charset="utf-8">
-  <title>Prodottiii</title>
+  <title>Prodottio</title>
   <link rel="stylesheet" href="style.css">
 </head>
 <body>

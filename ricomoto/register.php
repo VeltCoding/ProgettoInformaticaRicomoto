@@ -21,15 +21,20 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 
       $hash = password_hash($password, PASSWORD_DEFAULT);
 
-      $conn->begin_transaction();
+      $conn->beginTransaction();
 
       $stmt = $conn->prepare("INSERT INTO utente(nome,cognome,telefono,email,indirizzo,password) VALUES (?,?,?,?,?,?)");
-      $stmt->bind_param("ssssss", $nome, $cognome, $telefono, $email, $indirizzo, $hash);
+      $stmt->bindParam(1, $nome);
+      $stmt->bindParam(2, $cognome);
+      $stmt->bindParam(3, $telefono);
+      $stmt->bindParam(4, $email);
+      $stmt->bindParam(5, $indirizzo);
+      $stmt->bindParam(6, $hash);
       $stmt->execute();
-      $userId = $conn->insert_id;
+      $userId = $conn->lastInsertId();
 
       $stmt = $conn->prepare("INSERT INTO user_roles(user_id, role_id) SELECT ?, id FROM roles WHERE name='cliente'");
-      $stmt->bind_param("i", $userId);
+      $stmt->bindParam(1, $userId);
       $stmt->execute();
 
       $conn->commit();
@@ -52,22 +57,31 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 
       $hash = password_hash($password, PASSWORD_DEFAULT);
 
-      $conn->begin_transaction();
+      $conn->beginTransaction();
 
       $nomeFake = "Officina";
       $cognomeFake = $nomeOfficina;
 
       $stmt = $conn->prepare("INSERT INTO utente(nome,cognome,telefono,email,indirizzo,password) VALUES (?,?,?,?,?,?)");
-      $stmt->bind_param("ssssss", $nomeFake, $cognomeFake, $cellulare, $email, $indirizzoOff, $hash);
+      $stmt->bindParam(1, $nomeFake);
+      $stmt->bindParam(2, $cognomeFake);
+      $stmt->bindParam(3, $cellulare);
+      $stmt->bindParam(4, $email);
+      $stmt->bindParam(5, $indirizzoOff);
+      $stmt->bindParam(6, $hash);
       $stmt->execute();
-      $userId = $conn->insert_id;
+      $userId = $conn->lastInsertId();
 
       $stmt = $conn->prepare("INSERT INTO user_roles(user_id, role_id) SELECT ?, id FROM roles WHERE name='officina'");
-      $stmt->bind_param("i", $userId);
+      $stmt->bindParam(1, $userId);
       $stmt->execute();
 
       $stmt = $conn->prepare("INSERT INTO officina(nome, iva, indirizzo, cellulare, utente_id) VALUES (?,?,?,?,?)");
-      $stmt->bind_param("ssssi", $nomeOfficina, $iva, $indirizzoOff, $cellulare, $userId);
+      $stmt->bindParam(1, $nomeOfficina);
+      $stmt->bindParam(2, $iva);
+      $stmt->bindParam(3, $indirizzoOff);
+      $stmt->bindParam(4, $cellulare);
+      $stmt->bindParam(5, $userId);
       $stmt->execute();
 
       $conn->commit();

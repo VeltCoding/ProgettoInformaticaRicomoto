@@ -29,9 +29,9 @@ $stmt = $conn->prepare("
   WHERE token_hash = ?
   LIMIT 1
 ");
-$stmt->bind_param("s", $hash);
+$stmt->bindParam(1, $hash);
 $stmt->execute();
-$row = $stmt->get_result()->fetch_assoc();
+$row = $stmt->fetch();
 
 if (!$row) {
   http_response_code(401);
