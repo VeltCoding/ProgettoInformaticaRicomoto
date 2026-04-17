@@ -26,9 +26,18 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
       $_SESSION["roles"] = loadUserRoles($uid);
       $_SESSION["permissions"] = loadPermissions($uid);
 
+      // carica tenancy_id per officina
+      $_SESSION["tenancy_id"] = loadUserTenancy($uid);
+
       // genera JWT (10 minuti) e salva in sessione
       $_SESSION["jwt"] = jwt_sign(["sub" => $uid], 600);
       $_SESSION["jwt_exp"] = time() + 600;
+
+      // Reindirizza admin_tenancy alla dashboard admin
+      if (isAdminTenancy()) {
+        header("Location: admin_tenancy.php");
+        exit;
+      }
 
       header("Location: dashboard.php");
       exit;

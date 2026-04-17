@@ -369,7 +369,6 @@ ALTER TABLE `user_roles`
 --
 ALTER TABLE `utente`
   ADD PRIMARY KEY (`ID`),
-  ADD UNIQUE KEY `emails` (`nome`),
   ADD UNIQUE KEY `uq_utente_email` (`email`);
 
 --
@@ -480,6 +479,75 @@ ALTER TABLE `user_permissions`
 ALTER TABLE `user_roles`
   ADD CONSTRAINT `user_roles_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `utente` (`ID`) ON DELETE CASCADE,
   ADD CONSTRAINT `user_roles_ibfk_2` FOREIGN KEY (`role_id`) REFERENCES `roles` (`id`) ON DELETE CASCADE;
+
+-- Aggiungi colonne mancanti a tenancy (se non esistono)
+ALTER TABLE tenancy ADD COLUMN IF NOT EXISTS descrizione TEXT DEFAULT NULL;
+ALTER TABLE tenancy ADD COLUMN IF NOT EXISTS contatti VARCHAR(255) DEFAULT NULL;
+ALTER TABLE tenancy ADD COLUMN IF NOT EXISTS colore_primario VARCHAR(20) DEFAULT NULL;
+ALTER TABLE tenancy ADD COLUMN IF NOT EXISTS colore_secondario VARCHAR(20) DEFAULT NULL;
+ALTER TABLE tenancy ADD COLUMN IF NOT EXISTS logo VARCHAR(255) DEFAULT NULL;
+
+-- Aggiungi colonna mancante a prodotto (se non esiste)
+ALTER TABLE prodotto ADD COLUMN IF NOT EXISTS descrizione TEXT NOT NULL DEFAULT '';
+
+-- 1. Creare tabella tenancy (solo se non esiste)
+CREATE TABLE IF NOT EXISTS `tenancy` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `nome_shop` varchar(255) NOT NULL,
+  `subdomain` varchar(100) NOT NULL UNIQUE,
+  `logo` varchar(255) DEFAULT NULL,
+  `colore_primario` varchar(20) DEFAULT NULL,
+  `colore_secondario` varchar(20) DEFAULT NULL,
+  `descrizione` text DEFAULT NULL,
+  `contatti` varchar(255) DEFAULT NULL,
+  `stato` enum('attivo','sospeso','disattivato') NOT NULL DEFAULT 'attivo',
+  `created_at` timestamp NULL DEFAULT current_timestamp(),
+  `updated_at` timestamp NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- 2. Tenancy principale (solo se non esiste)
+INSERT INTO `tenancy` (`nome_shop`, `subdomain`, `stato`) 
+VALUES ('Ricomoto Centrale', 'centrale', 'attivo')
+ON DUPLICATE KEY UPDATE `nome_shop` = `nome_shop`;
+
+-- 3. Aggiungere ruolo admin_tenancy (solo se non esiste)
+INSERT INTO `roles` (`name`, `description`) VALUES ('admin_tenancy', 'Amministratore shop/officina')
+ON DUPLICATE KEY UPDATE `name` = `name`;
+
+-- 4. Permessi per admin_tenancy (solo se non esistono)
+INSERT INTO `permissions` (`code`, `description`) VALUES 
+    ('tenancy.gestisci', 'Gestisce la tenancy'),
+    ('tenancy.leggi', 'Legge dati tenancy'),
+    ('prodotto.modifica', 'Modifica prodotti'),
+    ('officina.leggi', 'Legge dati officina'),
+    ('officina.modifica', 'Modifica officina')
+ON DUPLICATE KEY UPDATE `code` = `code`;
+
+-- 5. Assegna permessi al ruolo admin_tenancy
+INSERT INTO `role_permissions` (`role_id`, `permission_id`)
+SELECT r.id, p.id FROM `roles` r, `permissions` p 
+WHERE r.name = 'admin_tenancy' 
+AND p.code IN ('tenancy.gestisci', 'tenancy.leggi', 'prodotto.modifica', 'officina.leggi', 'officina.modifica')
+ON DUPLICATE KEY UPDATE `role_id` = `role_id`;
+
+-- 6. Creare utente Admin (solo se non esiste)
+-- Password: Admin123!
+INSERT INTO `utente` (`nome`, `cognome`, `telefono`, `email`, `indirizzo`, `password`, `tenancy_id`)
+SELECT 'Admin', 'Sistema', '0000000000', 'admin@ricomoto.it', 'Sede centrale', '$2y$12$LQv3c1yqBWVHxkd0LHAkCOYz6TtxMQJqhN8/LewY5GyYqKxLQv2Gi', NULL
+FROM DUAL WHERE NOT EXISTS (SELECT 1 FROM `utente` WHERE `email` = 'admin@ricomoto.it');
+
+-- 7. Assegna ruolo admin all'utente admin
+INSERT INTO `user_roles` (`user_id`, `role_id`)
+SELECT u.ID, r.id FROM `utente` u, `roles` r 
+WHERE u.email = 'admin@ricomoto.it' AND r.name = 'admin'
+ON DUPLICATE KEY UPDATE `user_id` = `user_id`;
+
+-- 8. Aggiorna AUTO_INCREMENT
+ALTER TABLE `roles` MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+ALTER TABLE `permissions` MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=23;
+ALTER TABLE `utente` MODIFY `ID` int(30) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=15;
+
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;

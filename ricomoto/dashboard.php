@@ -49,29 +49,51 @@ $stmt->execute();
 while ($row = $stmt->fetch()) $permessi[] = $row["code"];
 sort($permessi);
 
-// Se OFFICINA: MONITORA (notifiche acquisto)
+// Se OFFICINA: MONITORA (notifiche acquisto) - filtrate per tenancy
 $officinaId = null;
+$tenancyId = null;
 $notifiche = [];
-$stmt = $conn->prepare("SELECT id FROM officina WHERE utente_id = ?");
+$stmt = $conn->prepare("SELECT id, tenancy_id FROM officina WHERE utente_id = ?");
 $stmt->bindParam(1, $userId);
 $stmt->execute();
 $r = $stmt->fetch();
-if ($r) $officinaId = (int)$r["id"];
+if ($r) {
+  $officinaId = (int)$r["id"];
+  $tenancyId = $r["tenancy_id"] ? (int)$r["tenancy_id"] : null;
+}
 
 if ($officinaId) {
-  $stmt = $conn->prepare("
-    SELECT n.created_at,
-           n.messaggio AS notifica_messaggio,
-           u.nome AS buyer_nome, u.cognome AS buyer_cognome, u.email AS buyer_email,
-           p.titolo AS prodotto_titolo
-    FROM notifica n
-    JOIN utente u ON u.ID = n.utente_id
-    JOIN prodotto p ON p.id = n.prodotto_id
-    WHERE n.officina_id = ?
-    ORDER BY n.created_at DESC
-    LIMIT 50
-  ");
-  $stmt->bindParam(1, $officinaId);
+  // Filtra per tenancy_id se presente
+  if ($tenancyId) {
+    $stmt = $conn->prepare("
+      SELECT n.created_at,
+             n.messaggio AS notifica_messaggio,
+             u.nome AS buyer_nome, u.cognome AS buyer_cognome, u.email AS buyer_email,
+             p.titolo AS prodotto_titolo
+      FROM notifica n
+      JOIN utente u ON u.ID = n.utente_id
+      JOIN prodotto p ON p.id = n.prodotto_id
+      WHERE n.officina_id = ? AND n.tenancy_id = ?
+      ORDER BY n.created_at DESC
+      LIMIT 50
+    ");
+    $stmt->bindParam(1, $officinaId);
+    $stmt->bindParam(2, $tenancyId);
+  } else {
+    $stmt = $conn->prepare("
+      SELECT n.created_at,
+             n.messaggio AS notifica_messaggio,
+             u.nome AS buyer_nome, u.cognome AS buyer_cognome, u.email AS buyer_email,
+             p.titolo AS prodotto_titolo
+      FROM notifica n
+      JOIN utente u ON u.ID = n.utente_id
+      JOIN prodotto p ON p.id = n.prodotto_id
+      WHERE n.officina_id = ?
+      ORDER BY n.created_at DESC
+      LIMIT 50
+    ");
+    $stmt->bindParam(1, $officinaId);
+  }
   $stmt->execute();
   $notifiche = $stmt->fetchAll();
 }
@@ -99,10 +121,18 @@ if ($officinaId) {
       </div>
 
       <div class="btn-row">
-        <a class="btn btn-blue" href="prodotti.php">Vai ai prodotti</a>
-
         <?php if (hasPermission("prodotto.crea")): ?>
-          <a class="btn btn-white" href="carica_prodotto.php">Carica prodotto</a>
+          <?php if ($tenancyId): ?>
+            <!-- Officina con shop → Gestisci Shop -->
+            <a class="btn btn-blue" href="gestisci_shop.php">Gestisci Shop</a>
+          <?php else: ?>
+            <!-- Officina senza shop → Crea Shop -->
+            <a class="btn btn-blue" href="crea_shop.php">Crea Shop</a>
+          <?php endif; ?>
+        <?php endif; ?>
+
+        <?php if (isAdminTenancy()): ?>
+          <a class="btn btn-blue" href="admin_tenancy.php">Admin Tenancy</a>
         <?php endif; ?>
 
         <a class="btn btn-white" href="logout.php">Logout</a>

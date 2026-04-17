@@ -1,5 +1,6 @@
 <?php
 require_once __DIR__ . "/auth.php";
+require_once __DIR__ . "/router.php";
 requirePermission('prodotto.crea');
 
 $userId = $_SESSION['user_id'] ?? null;
@@ -7,10 +8,15 @@ if (!$userId) { header("Location: login.php"); exit; }
 
 // trovo officina collegata (serve per sapere a chi appartiene il prodotto)
 $officinaId = null;
-$stmt = $conn->prepare("SELECT id FROM officina WHERE utente_id = ?");
+$tenancyId = null;
+
+$stmt = $conn->prepare("SELECT id, tenancy_id FROM officina WHERE utente_id = ?");
 $stmt->bindParam(1, $userId);
 $stmt->execute();
-if ($row = $stmt->fetch()) $officinaId = (int)$row['id'];
+if ($row = $stmt->fetch()) {
+  $officinaId = (int)$row['id'];
+  $tenancyId = $row['tenancy_id'] ? (int)$row['tenancy_id'] : null;
+}
 
 if (!$officinaId && !hasPermission('utenti.gestisci')) {
   die("Solo un account officina (o admin) può caricare prodotti.");
@@ -50,12 +56,13 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
       throw new Exception("Upload fallito.");
     }
 
-    // inserisco prodotto
-    $stmt = $conn->prepare("INSERT INTO prodotto(officina_id, titolo, descrizione, immagine, stato) VALUES (?,?,?,?, 'disponibile')");
+    // inserisco prodotto (con tenancy_id)
+    $stmt = $conn->prepare("INSERT INTO prodotto(officina_id, titolo, descrizione, immagine, stato, tenancy_id) VALUES (?,?,?,?, 'disponibile', ?)");
     $stmt->bindParam(1, $officinaId);
     $stmt->bindParam(2, $titolo);
     $stmt->bindParam(3, $descrizione);
     $stmt->bindParam(4, $destRel);
+    $stmt->bindParam(5, $tenancyId);
     $stmt->execute();
 
     $ok = "Prodotto caricato!";

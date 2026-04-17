@@ -1,5 +1,6 @@
 <?php
 require_once __DIR__ . "/auth.php";
+require_once __DIR__ . "/router.php";
 requirePermission('acquisto.crea');
 
 $userId = $_SESSION['user_id'] ?? null;
@@ -12,7 +13,7 @@ try {
   $conn->beginTransaction();
 
     // blocco riga prodotto (evita doppio acquisto)
-      $stmt = $conn->prepare("SELECT id, officina_id, stato, titolo FROM prodotto WHERE id=? FOR UPDATE");
+      $stmt = $conn->prepare("SELECT id, officina_id, tenancy_id, stato, titolo FROM prodotto WHERE id=? FOR UPDATE");
         $stmt->bindParam(1, $pid);
           $stmt->execute();
             $r = $stmt->fetch();
@@ -25,16 +26,18 @@ try {
                       $stmt->bindParam(1, $pid);
                         $stmt->execute();
 
-                          // crea notifica per officina
+                          // crea notifica per officina (con tenancy_id)
                             $officinaId = (int)$r["officina_id"];
+                            $tenancyId = $r["tenancy_id"] ? (int)$r["tenancy_id"] : null;
                               $titolo = $r["titolo"];
                                 $messaggio = "Hai ricevuto un acquisto per: " . $titolo;
 
-                                  $stmt = $conn->prepare("INSERT INTO notifica(officina_id, prodotto_id, utente_id, messaggio) VALUES (?,?,?,?)");
+                                  $stmt = $conn->prepare("INSERT INTO notifica(officina_id, prodotto_id, utente_id, messaggio, tenancy_id) VALUES (?,?,?,?,?)");
                                     $stmt->bindParam(1, $officinaId);
                                     $stmt->bindParam(2, $pid);
                                     $stmt->bindParam(3, $userId);
                                     $stmt->bindParam(4, $messaggio);
+                                    $stmt->bindParam(5, $tenancyId);
                                       $stmt->execute();
 
                                         $conn->commit();
