@@ -1,0 +1,34 @@
+<?php
+require_once __DIR__ . '/auth.php';
+requirePermission('acquisto.crea');
+$userId = $_SESSION['user_id'] ?? null;
+if (!$userId) { header('Location: ' . appUrl('login.php')); exit; }
+$pid = (int)($_POST['prodotto_id'] ?? 0);
+if ($pid <= 0) { header('Location: ' . appUrl('prodotti.php') . '?msg=Prodotto+non+valido'); exit; }
+$messaggio = trim($_POST['messaggio'] ?? '');
+if ($messaggio === '') {
+  header('Location: ' . appUrl('prodotti.php') . '?msg=' . urlencode('Inserisci un messaggio.'));
+  exit;
+}
+try {
+  $conn->begin_transaction();
+  $stmt = $conn->prepare('SELECT id, officina_id, titolo FROM prodotto WHERE id=? FOR UPDATE');
+  $stmt->bind_param('i', $pid);
+  $stmt->execute();
+  $r = $stmt->get_result()->fetch_assoc();
+  $stmt->close();
+  if (!$r) throw new Exception('Prodotto non trovato.');
+  $officinaId = (int)$r['officina_id'];
+  $fullMessage = "Richiesta di info su '" . $r['titolo'] . "': " . $messaggio;
+  $stmt = $conn->prepare('INSERT INTO notifica(officina_id, prodotto_id, utente_id, messaggio) VALUES (?,?,?,?)');
+  $stmt->bind_param('iiis', $officinaId, $pid, $userId, $fullMessage);
+  $stmt->execute();
+  $stmt->close();
+  $conn->commit();
+  header('Location: ' . appUrl('prodotti.php') . '?msg=' . urlencode("Richiesta inviata all'officina."));
+  exit;
+} catch (Throwable $e) {
+  try { $conn->rollback(); } catch (Throwable $t) {}
+  header('Location: ' . appUrl('prodotti.php') . '?msg=' . urlencode('Errore: ' . $e->getMessage()));
+  exit;
+}

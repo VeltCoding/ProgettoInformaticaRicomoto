@@ -1,0 +1,22 @@
+<svg width="640" height="140" viewBox="0 0 640 140" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="ricomotoRed" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#ff4b5e"/>
+      <stop offset="55%" stop-color="#d81d31"/>
+      <stop offset="100%" stop-color="#7c0e19"/>
+    </linearGradient>
+    <filter id="softGlow" x="-25%" y="-25%" width="150%" height="150%">
+      <feGaussianBlur stdDeviation="3.6" result="blur"/>
+      <feMerge>
+        <feMergeNode in="blur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+  </defs>
+  <g filter="url(#softGlow)">
+    <path d="M26 26H120C149 26 168 40 168 63C168 81 154 95 132 101L160 116H112L89 103H63L57 116H24L26 26ZM66 48L64 81H112C126 81 136 74 136 63C136 53 128 48 113 48H66Z" fill="url(#ricomotoRed)"/>
+    <path d="M66 48L30 116H0L40 40C46 28 57 22 72 22H113C141 22 160 35 160 58C160 77 146 90 124 95L157 116H112L82 97H60L66 48Z" fill="url(#ricomotoRed)" opacity="0.95"/>
+  </g>
+  <text x="188" y="82" fill="url(#ricomotoRed)" font-family="Arial Black, Arial, Helvetica, sans-serif" font-size="64" font-style="italic" font-weight="900" letter-spacing="2">RICOMOTO</text>
+  <text x="192" y="112" fill="#f5f5f6" font-family="Arial, Helvetica, sans-serif" font-size="18" font-style="italic" letter-spacing="6">TUTTO PER LA TUA MOTO</text>
+</svg>
